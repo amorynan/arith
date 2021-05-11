@@ -23,3 +23,20 @@ func TestTwoSum(t *testing.T) {
 		assert.Equal(t, val.verify, resMap)
 	}
 }
+
+var findMedianSortedCases = []struct {
+	nums1 []int
+	nums2 []int
+	target float64
+}{
+	{ []int{1,3}, []int{2}, 2.00000},
+	{ []int{1,2}, []int{3,4}, 2.50000},
+	{ []int{2}, []int{1,3,4}, 2.50000},
+}
+
+func TestFindMedianSortedArrays(t *testing.T) {
+	for _, ca := range findMedianSortedCases{
+		res := findMedianSortedArrays(ca.nums1, ca.nums2)
+		assert.Equal(t, ca.target, res)
+	}
+}
