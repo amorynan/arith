@@ -1,7 +1,5 @@
 package array
 
-import "math"
-
 func twoSum(nums []int, target int) []int {
 	// only go through once, because first just can sum with the left in last
 	leftMap := make(map[int]int, len(nums))
@@ -49,4 +47,35 @@ func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 	}else {
 		return float64(totalNum[midLeft] + totalNum[mid]) / 2.0
 	}
+}
+
+/**
+执行效果在go
+ */
+func maxArea(height []int) int {
+	maxRecord := 0
+
+	head, tail := 0, len(height)-1
+	for head < tail {
+		maxRecord = max(maxRecord, (tail-head) * min(height[head], height[tail]))
+		if (height[head] <= height[tail]) {
+			head ++
+		} else {
+			tail --
+		}
+	}
+	return maxRecord
+}
+
+func min(a, b int) int {
+	if a <= b {
+		return a
+	}
+	return b
+}
+func max(a, b int) int {
+	if a < b {
+		return b
+	}
+	return a
 }
