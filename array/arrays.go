@@ -108,6 +108,50 @@ func threeSum_Best(nums []int) [][]int {
 	return res
 }
 
+func threeSumClosest(nums []int, target int) int {
+	sort.Ints(nums)
+
+	res, minDiff, index := 0, 0, 0
+	for ; index < len(nums)-2; index ++ {
+		if index > 1 && nums[index] == nums[index-1] {
+			continue
+		}
+		start, end := index + 1, len(nums) - 1
+
+		for start < end {
+			if start > index + 1 && nums[start] == nums[start-1] {
+				start ++
+				continue
+			}
+			if end < len(nums)-1 && nums[end] == nums[end+1] {
+				end --
+				continue
+			}
+			sum := nums[index] + nums[start] + nums[end]
+			diff := sum - target
+			if diff == 0 {
+				return target
+			}
+			if diff > 0 {
+				diff = -diff
+			}
+			if minDiff == 0 || diff > minDiff {
+				res = sum
+				minDiff = diff
+			}
+			if sum < target {
+				start ++
+				continue
+			}
+			if sum > target {
+				end --
+				continue
+			}
+		}
+	}
+	return res
+}
+
 func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 	mid := (len(nums1) + len(nums2)) / 2
 	midLeft := -1

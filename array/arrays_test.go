@@ -45,6 +45,22 @@ func TestThreeSum(t *testing.T){
 	}
 }
 
+
+var threeSumClosetCases = []struct{
+	params []int
+	target int
+	res int
+}{
+	{params: []int{-1,2,1,-4}, target: 1, res: 2},
+}
+
+func TestThreeSumCloset (t *testing.T) {
+	for _, ca := range threeSumClosetCases {
+		res := threeSumClosest(ca.params, ca.target)
+		assert.Equal(t, ca.res, res)
+	}
+}
+
 var findMedianSortedCases = []struct {
 	nums1 []int
 	nums2 []int
