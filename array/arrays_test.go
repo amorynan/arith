@@ -2,6 +2,7 @@ package array
 
 import (
 	"github.com/stretchr/testify/assert"
+	"sort"
 	"testing"
 )
 
@@ -21,6 +22,26 @@ func TestTwoSum(t *testing.T) {
 			resMap[v] = struct{}{}
 		}
 		assert.Equal(t, val.verify, resMap)
+	}
+}
+
+var threeSumCases = []struct{
+	params []int
+	res [][]int
+}{
+	{params: []int{0,0,0,0}, res: [][]int{{0,0,0}}},
+	{params: []int{-1,-1,2,2,2}, res: [][]int{{-1,-1,2}}},
+	{params: []int{-1,0,1,2,-1,-4,-2,-3,3,0,4}, res: [][]int{{-4,0,4},{-4,1,3},{-3,-1,4},{-3,0,3},{-3,1,2},{-2,-1,3},{-2,0,2},{-1,-1,2},{-1,0,1}}},
+	{params: []int{-4,-2,-2,-2,0,1,2,2,2,3,3,4,4,6,6}, res: [][]int{{-4,-2,6},{-4,0,4},{-4,1,3},{-4,2,2},{-2,-2,4},{-2,0,2}}},
+}
+
+func TestThreeSum(t *testing.T){
+	for _, ca := range threeSumCases {
+		res := threeSum_Best(ca.params)
+		for _, r := range res {
+			sort.Ints(r)
+		}
+		assert.Equal(t, ca.res, res)
 	}
 }
 
