@@ -152,6 +152,91 @@ func threeSumClosest(nums []int, target int) int {
 	return res
 }
 
+func fourSum(nums []int, target int) [][]int {
+	if len(nums) < 4 {
+		return nil
+	}
+
+	sort.Ints(nums)
+
+	res, idx1 := make([][]int, 0), 0
+
+	for ; idx1 < len(nums)-3; idx1 ++ {
+		if idx1 > 0 && nums[idx1] == nums[idx1-1] {
+			continue
+		}
+		for idx2 := idx1+1; idx2 < len(nums)-2 ; idx2 ++ {
+			if idx2 > idx1+1 && nums[idx2] == nums[idx2-1] {
+				continue
+			}
+			start , end := idx2 + 1, len(nums) -1
+			for start < end {
+				if start > idx2+1 && nums[start] == nums[start-1] {
+					start ++
+					continue
+				}
+				if end < len(nums)-1 && nums[end] == nums[end+1] {
+					end --
+					continue
+				}
+
+				sum := nums[idx1] +  nums[idx2] + nums[start] + nums[end]
+				if sum == target {
+					res = append(res, []int{nums[idx1] ,nums[idx2], nums[start], nums[end]})
+					start ++
+					end --
+					continue
+				}
+				if sum < target {
+					start ++
+					continue
+				}
+				end --
+			}
+		}
+	}
+	return res
+
+}
+
+func removeDuplicates(nums []int) (int, []int) {
+	i := 0
+	for i< len(nums) {
+		rep := i+1
+		for rep < len(nums) && nums[rep] == nums[i] {
+			nums = append(nums[:rep], nums[rep+1:]...)
+		}
+		i = rep
+	}
+	return len(nums), nums
+}
+
+/**
+ 这解法的好处
+ 1. 不用在每次比较的时候改变原数组，思路清晰，
+ 2. 同时，降低每次改变元素都会有的性能开销
+ */
+func removeDuplicates_Best(nums []int) (int, []int) {
+	if len(nums) <= 1{
+		return len(nums), nums
+	}
+	i,r := 0,1
+	for r < len(nums) {
+		if nums[i] == nums[r] {
+			r ++
+			continue
+		}
+		if r - i > 1 {
+			nums[i+1] = nums[r]
+		}
+		i++
+		r++
+	}
+	nums = nums[:i+1]
+
+	return len(nums), nums
+}
+
 func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 	mid := (len(nums1) + len(nums2)) / 2
 	midLeft := -1

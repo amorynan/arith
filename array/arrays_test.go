@@ -61,6 +61,38 @@ func TestThreeSumCloset (t *testing.T) {
 	}
 }
 
+var fourSumCases = []struct{
+	params []int
+	target int
+	res [][]int
+}{
+	{params: []int{-3,-2,-1,0,0,1,2,3}, target: 0, res: [][]int{{-3,-2,2,3},{-3,-1,1,3},{-3,0,0,3},{-3,0,1,2},{-2,-1,0,3},{-2,-1,1,2},{-2,0,0,2},{-1,0,0,1}}},
+}
+
+func TestFourSum (t *testing.T) {
+	for _, ca := range fourSumCases{
+		res := fourSum(ca.params, ca.target)
+		assert.Equal(t, ca.res, res)
+	}
+}
+
+var repeatedCases = []struct{
+	params []int
+	len int
+	res []int
+}{
+	//{params: []int{1,1,2}, res: 2},
+	{params: []int{0,0,1,1,1,2,2,3,3,4}, len: 5, res: []int{0,1,2,3,4}},
+}
+
+func TestReapted(t *testing.T) {
+	for _, ca := range repeatedCases{
+		incs,res := removeDuplicates(ca.params)
+		assert.Equal(t, ca.len, incs)
+		assert.Equal(t, ca.res, res)
+	}
+}
+
 var findMedianSortedCases = []struct {
 	nums1 []int
 	nums2 []int
