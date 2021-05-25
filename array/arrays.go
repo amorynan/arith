@@ -212,7 +212,7 @@ func removeDuplicates(nums []int) (int, []int) {
 }
 
 /**
- 这解法的好处
+ 采用复制解法的好处
  1. 不用在每次比较的时候改变原数组，思路清晰，
  2. 同时，降低每次改变元素都会有的性能开销
  */
@@ -271,6 +271,114 @@ func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 	}else {
 		return float64(totalNum[midLeft] + totalNum[mid]) / 2.0
 	}
+}
+
+/**
+ 依旧采用复制+双指针的方式，但是要格外注意一下 结束的条件，要让最后的i的值也需要比较，然后就是 空值需要 直接返回
+ */
+func removeElement(nums []int, val int) int {
+	if len(nums) == 0 {
+		return len(nums)
+	}
+	i, r := 0, len(nums)-1
+	for i != r+1 {
+		if nums[r] == val {
+			r --
+			continue
+		}
+		if nums[i] == val {
+			nums[i] = nums[r]
+			r --
+		}
+
+		i++
+	}
+
+	nums = nums[:i]
+	return len(nums)
+}
+
+/**
+ #s 找到当前排列int 数组的下一个大的数组
+ */
+func nextPermutation(nums []int)  []int{
+	if len(nums) <= 1 {
+		return nums
+	}
+
+	f, l := len(nums)-2, len(nums)-1
+
+	for f>=0 && l < len(nums) && nums[f] >= nums[l] {
+		for l < len(nums) {
+			if nums[f] >= nums[l] {
+				l ++
+			}else {
+				nums = switchArr(nums, f, l)
+				return nums
+			}
+		}
+		i, j := f, f+1
+		for ; j < len(nums); j ++  {
+			nums = switchArr(nums, i ,j)
+			i ++
+		}
+		f--
+		l = f+1
+	}
+	if f >= 0 {
+		nums = switchArr(nums, f, l)
+	}
+	return nums
+}
+
+func switchArr(nums []int, idx1, idx2 int) []int{
+	temp := nums[idx1]
+	nums[idx1] = nums[idx2]
+	nums[idx2] = temp
+	return nums
+}
+
+/**
+ #S. 旋转排序数组找到目标值，时间复杂度：o(logn)
+还是二分，最重要的思想上判断有序的部分在那部分
+ */
+func search(nums []int, target int) int {
+	if target < nums[0] && target > nums[len(nums)-1] {
+		return -1
+	}
+	if len(nums) == 1 && nums[0] == target{
+		return 0
+	}else if len(nums) == 1 && nums[0] != target {
+		return -1
+	}
+
+	l, r := 0, len(nums)-1
+	//detail 1. l <= r to make sure mid is (l == r)
+	for l <= r {
+		m := (l + r) >> 1
+		if nums[m] == target {
+			return m
+		}
+
+		if nums[l] <= nums[m] {
+			// order in left part
+			if target >= nums[l] && target < nums[m] {
+				r = m - 1
+			}else {
+			  	l = m + 1
+			}
+		}else {
+			// order in right part
+			// detail 2. there should be m+1 ,so use >= ,not >
+			if target <= nums[r] && target >= nums[m+1] {
+				l = m + 1
+			}else {
+				r = m - 1
+			}
+		}
+
+	}
+	return -1
 }
 
 /**

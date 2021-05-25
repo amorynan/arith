@@ -93,6 +93,23 @@ func TestReapted(t *testing.T) {
 	}
 }
 
+var nextPermutationArr = []struct {
+	ca []int
+	res []int
+}{
+	{ca: []int{1,2,3}, res: []int{1,3,2}},
+	{ca: []int{4,3,2,1}, res: []int{1,2,3,4}},
+	{ca: []int{2,3,1}, res:[]int{3,1,2}},
+	{ca: []int{1,5,1}, res:[]int{5,1,1}},
+}
+
+func TestNextPermutation(t *testing.T)  {
+	for _, ca := range nextPermutationArr {
+		res := nextPermutation(ca.ca)
+		assert.Equal(t, ca.res, res)
+	}
+}
+
 var findMedianSortedCases = []struct {
 	nums1 []int
 	nums2 []int
