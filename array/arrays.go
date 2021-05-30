@@ -2,6 +2,7 @@ package array
 
 import "sort"
 
+//========================== 加和 =======================================
 func twoSum(nums []int, target int) []int {
 	// only go through once, because first just can sum with the left in last
 	leftMap := make(map[int]int, len(nums))
@@ -14,7 +15,14 @@ func twoSum(nums []int, target int) []int {
 	return nil
 }
 
-
+/**
+Given array nums = [-1, 0, 1, 2, -1, -4],
+A solution set is:
+[
+  [-1, 0, 1],
+  [-1, -1, 2]
+]
+ */
 func threeSum(nums []int) [][]int {
 	sort.Ints(nums)
 
@@ -55,7 +63,6 @@ func threeSum(nums []int) [][]int {
 		}
 	return res
 }
-
 // sort and three pointer
 // 排序对于去重 是很重要的手段
 // 主要需要考虑的细节：1。去重判断，减少重复的计算，确定每个index 为三元组最小值之后，确定第二个最小的和最大那个值的即可，
@@ -108,6 +115,10 @@ func threeSum_Best(nums []int) [][]int {
 	return res
 }
 
+/**
+Given array nums = [-1, 2, 1, -4], and target = 1.
+The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
+ */
 func threeSumClosest(nums []int, target int) int {
 	sort.Ints(nums)
 
@@ -152,6 +163,16 @@ func threeSumClosest(nums []int, target int) int {
 	return res
 }
 
+/**
+ Given array nums = [1, 0, -1, 0, -2, 2], and target = 0.
+
+A solution set is:
+[
+  [-1,  0, 0, 1],
+  [-2, -1, 1, 2],
+  [-2,  0, 0, 2]
+]
+ */
 func fourSum(nums []int, target int) [][]int {
 	if len(nums) < 4 {
 		return nil
@@ -199,6 +220,96 @@ func fourSum(nums []int, target int) [][]int {
 
 }
 
+/**
+ 限定总和，求所有的加和方式
+Input: candidates = [2,3,6,7], target = 7,
+A solution set is:
+[
+  [7],
+  [2,2,3]
+]
+ */
+func combinationSum(candidates []int, target int) [][]int {
+	sort.Ints(candidates)
+	resItem, res := make([]int, 0), make([][]int, 0)
+	combinationSumLoop(candidates, resItem, 0, target, &res)
+	return res
+}
+
+/**
+$S 组合排序 = 回溯+记录
+有几个需要注意的地方：1.注意每一个解都需要重新copy到res 中 2. 注意从每一个解在回来的时候需要重重置
+ */
+func combinationSumLoop(candidates, resItem []int, idx, target int, res *[][]int) {
+	if target < 0 {
+		return
+	}
+	if target == 0 {
+		// resItem sums is target , so make it into res
+		// #### here is import copy , 如果直接将resItem 放进res 里面的的话，后面如果在回溯的过程中，有新的试错元素加入当前的resItem ，就会被覆盖
+		cp := make([]int, len(resItem))
+		copy(cp, resItem)
+		*res = append(*res, cp)
+		return
+	}
+
+	for i := idx; i < len(candidates); i ++ {
+		if candidates[i] > target {
+			// no need to combination
+			break
+		}
+		resItem = append(resItem, candidates[i])
+		combinationSumLoop(candidates, resItem, i, target-candidates[i], res)
+		// 需要去掉这一次的经历
+		resItem = resItem[:len(resItem)-1]
+	}
+}
+
+/**
+组合求和， 要求不能有重复的集合和元素
+注意和上面不一样的地方除了下一个解的开始地方，以及消重的地方
+ */
+func combinationSum2(candidates []int, target int) [][]int {
+	sort.Ints(candidates)
+	if len(candidates) == 0 {
+		return [][]int{}
+	}
+	resItem, res := []int{}, [][]int{}
+	combinationSum2Loop(candidates, resItem, 0, target, &res)
+	return res
+}
+
+func combinationSum2Loop(candidates, resItem []int, idx, target int, res *[][]int) {
+	if target < 0 {
+		return
+	}
+	if target == 0 {
+		cp := make([]int, len(resItem))
+		copy(cp, resItem)
+		*res = append(*res, cp)
+		return
+	}
+
+	for i := idx; i<len(candidates); i++ {
+		if candidates[i] > target {
+			break
+		}
+		if  i > idx && candidates[i] == candidates[i-1]{
+			continue
+		}
+		resItem = append(resItem, candidates[i])
+		combinationSum2Loop(candidates, resItem, i+1, target-candidates[i], res)
+		resItem = resItem[:len(resItem)-1]
+	}
+}
+
+/**
+Given nums = [1,1,2],
+
+Your function should return length = 2, with the first two elements of nums being 1 and 2 respectively.
+
+It doesn't matter what you leave beyond the returned length.
+ */
 func removeDuplicates(nums []int) (int, []int) {
 	i := 0
 	for i< len(nums) {

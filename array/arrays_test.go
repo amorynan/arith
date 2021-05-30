@@ -126,3 +126,26 @@ func TestFindMedianSortedArrays(t *testing.T) {
 		assert.Equal(t, ca.target, res)
 	}
 }
+
+var combinationTestCases = []struct{
+	target int
+	nums   []int
+	res [][]int
+}{
+	//{target: 8, nums: []int{2,3,5}, res: [][]int{{2,2,2,2},{2,3,3},{3,5}}},
+	{target: 8, nums: []int{3,1,3,5,1,1},res: [][]int{{1,1,1,5},{1,1,3,3},{3,5}}},
+	//{target: 5, nums: []int{2, 5, 2, 1, 2}, res: [][]int{{1,2,2}, {5}}},
+}
+func TestCombinationSum(t *testing.T)  {
+	for _, ca := range combinationTestCases{
+		res := combinationSum(ca.nums, ca.target)
+		assert.Equal(t, ca.res, res)
+	}
+}
+func TestCombinationSum2(t *testing.T)  {
+	for _, ca := range combinationTestCases{
+		res := combinationSum2(ca.nums, ca.target)
+		assert.Equal(t, ca.res, res)
+	}
+}
+
