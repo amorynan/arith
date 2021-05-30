@@ -304,6 +304,48 @@ func combinationSum2Loop(candidates, resItem []int, idx, target int, res *[][]in
 }
 
 /**
+ 给定一个乘积 ，找到所有积因子组合
+ */
+func combinationMultiplication(multiplication int) [][]int {
+	if multiplication == 0 {
+		return [][]int{}
+	}
+
+	resItem, res, candidates := []int{}, [][]int{}, []int{}
+	for i := 2; i < multiplication ; i ++ {
+		candidates = append(candidates, i)
+	}
+	combinationMultiplicationLoop(candidates, resItem, multiplication, 0, &res)
+
+	for _, v := range res {
+		v1 := append(v,  1)
+		res = append(res, v1)
+	}
+	res = append(res, []int{1, multiplication})
+	return res
+}
+
+func combinationMultiplicationLoop(candidates, resItem []int, target, idx int, res *[][]int){
+	if target == 1 {
+		cp := make([]int, len(resItem))
+		copy(cp, resItem)
+		*res = append(*res, cp)
+		return
+	}
+
+	// i 从0 开始 会让 结果集出现重复 和 不从0开始，让结果集不重复
+	for i := idx; i < len(candidates); i++ {
+		// 这里和上面的剪枝部分还不太一样
+		if target % candidates[i] != 0 {
+			continue
+		}
+		resItem = append(resItem, candidates[i])
+		combinationMultiplicationLoop(candidates, resItem, target / candidates[i], i, res)
+		resItem = resItem[:len(resItem)-1]
+	}
+}
+
+/**
 Given nums = [1,1,2],
 
 Your function should return length = 2, with the first two elements of nums being 1 and 2 respectively.

@@ -149,3 +149,10 @@ func TestCombinationSum2(t *testing.T)  {
 	}
 }
 
+
+func TestCombinationMultiplication(t *testing.T) {
+	res := combinationMultiplication(8)
+	for _, v := range res {
+		t.Logf("%+v", v)
+	}
+}
