@@ -534,6 +534,82 @@ func search(nums []int, target int) int {
 	return -1
 }
 
+//================================= 数组hash ========================
+/**
+ 找到数组中缺失的第一个正整数
+ 	主要掌握两个解决方案
+ */
+func swap(nums *[]int, i, j int) {
+	temp := (*nums)[i]
+	(*nums)[i] = (*nums)[j]
+	(*nums)[j] = temp
+}
+func firstMissingPositive(nums []int) int {
+	// 置换 = 将正序的数据都先摆正到他的位置上
+	//return firstMissingPositiveSwap(nums)
+	return firstMissPositiveIndex(nums)
+}
+
+func firstMissPositiveIndex(nums []int) int {
+	// trick 的方式: 由于符合问题的取值范围只能是[1, len(nums)+1], 而数组的下标取值范围是[0, len(nums)-1], 如果将后面的数据关联前面的，那就是数组
+	// 下标方式作为一个简单的hash
+	// 那么问题就在于如何关联------------- 如果原数组中的数字在[1, len(nums)] 中，那么就在该数字-1 作为数组的index 就可以标记一下，代表这个数字存在，
+	// 标记的方式 就很 trick 了，把当前的数据取负一下即可， 那么如果本来就是负数的，就需要区分是不是我们手动变过来的，还是本来的，因为如果本来就是负数，也
+	// 理解成我们变过来的，就相当于，改负数index 的值也被存在我们可以检索存不存在的hash map 中了，但是实际人家是不存在的, 所以我们预先处理一下，将原本的
+	// 负数 都变成0
+	// pre deal : 将0 和 负数 都当作缺失的值，变成len(nums)+1 这个最大的值
+	for i, v := range nums {
+		if v < 0 {
+			nums[i] = len(nums)+1
+		}
+	}
+	// 继续处理接下来的
+	for _, v := range nums {
+		// 现在还是负数的一定是手动变来的
+		if v < 0 {
+			v = -v
+		}
+
+		if v > 0 && v <= len(nums) && nums[v-1] > 0 {
+			nums[v-1] = -nums[v-1]
+		}
+	}
+
+	min := 1
+	for idx, v := range nums{
+		if v == 0 {
+			continue
+		}
+		if v < 0 && min == idx+1{
+			min ++
+		}
+	}
+	return min
+}
+
+func firstMissingPositiveSwap(nums []int) int {
+	// 置换 = 将正序的数据都先摆正到他的位置上
+	for i := 0; i < len(nums) ; i ++ {
+		if nums[i] < 1 {
+			continue
+		}
+		//***** 这里要格外注意，并且，有大于 小于符号的 放在前面，顺序也不能错
+		for nums[i] >= 1 && nums[i] <= len(nums) && nums[i] != nums[nums[i]-1]  {
+			swap(&nums, i, nums[i]-1)
+		}
+	}
+	min := 1
+	for _, v := range nums{
+		if v < 1 {
+			continue
+		}
+		if v == min {
+			min ++
+		}
+	}
+	return min
+}
+
 /**
 执行效果在go
  */

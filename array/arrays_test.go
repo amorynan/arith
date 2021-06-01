@@ -156,3 +156,17 @@ func TestCombinationMultiplication(t *testing.T) {
 		t.Logf("%+v", v)
 	}
 }
+
+
+var firstMissPositiveCases = []struct{
+	ca []int
+	res int
+}{
+	{ca: []int{-1, 4, 2, 1, 9, 10}, res: 3},
+}
+func TestFirstMissingPositive(t *testing.T) {
+	for _, c := range firstMissPositiveCases {
+		res := firstMissingPositive(c.ca)
+		assert.Equal(t, c.res, res)
+	}
+}
