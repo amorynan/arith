@@ -640,3 +640,96 @@ func max(a, b int) int {
 	}
 	return a
 }
+
+/**
+ #####sssss 经典的接🌧️雨水 题目
+
+ */
+func trap(height []int) int {
+
+	// find a cal area decrease and up
+	l, area := 0, 0
+	for l < len(height)-1 {
+		if l < len(height)-2 && height[l] == height[l+1] {
+			l ++
+			continue
+		}
+		t := l + 1
+		// find decrease pointer
+		if height[t] >= height[l] {
+			l ++
+			continue
+		}
+		decrease := 0
+		// find up pointer
+		for t < len(height) && height[t] < height[l]{
+			if height[t] <= height[t-1] {
+				decrease ++
+			}
+			t ++
+		}
+		if t == len(height) && decrease == t-l-1 {
+			// there is no need to cal,always decrease
+			break
+		}
+		min := height[l]
+		if t == len(height){
+			// from right -> left
+			break
+		}
+		// cal the area
+		mid := l + 1
+		for mid < t {
+			area += min-height[mid]
+			mid ++
+		}
+		l = t
+	}
+	r := len(height)-1
+	for r > l {
+		if r > 0 && height[r] == height[r-1] {
+			r --
+			continue
+		}
+		t := r - 1
+			if height[t] >= height[t+1] {
+				r --
+				continue
+			}
+			for t > l && height[t] < height[r] {
+				t --
+			}
+			min := height[r]
+			mid := r - 1
+			for mid > t {
+				area += min - height[mid]
+				mid --
+			}
+			r = t
+	}
+	return area
+}
+
+func trap_best(height []int) int {
+	l, r , firstMaxLeft, firstMaxRight, res := 0, len(height)-1, 0, 0, 0
+	for l < r {
+		if height[l] <= height[r] {
+			// 左边比右边矮，所以左边是瓶颈，作为可以接雨水的标准
+			if height[l] >= firstMaxLeft {
+				firstMaxLeft = height[l]
+			}else {
+				res += firstMaxLeft - height[l]
+			}
+			l ++
+		}else {
+			// 同右边
+			if height[r] >= firstMaxRight {
+				firstMaxRight = height[r]
+			} else {
+				res += firstMaxRight - height[r]
+			}
+			r --
+		}
+	}
+	return res
+}

@@ -170,3 +170,19 @@ func TestFirstMissingPositive(t *testing.T) {
 		assert.Equal(t, c.res, res)
 	}
 }
+
+
+var trapTest = []struct{
+	ca []int
+	res int
+}{
+	{ca: []int{0,1,0,2,1,0,1,3,2,1,2,1}, res: 6},
+	{ca: []int{4,2,0,3,2,5}, res: 9},
+	{ca: []int{5,5,1,7,1,1,5,2,7,6}, res: 23},
+}
+func TestTrap(t *testing.T)  {
+	for _, ca := range trapTest {
+		res := trap_best(ca.ca)
+		assert.Equal(t, ca.res, res)
+	}
+}
