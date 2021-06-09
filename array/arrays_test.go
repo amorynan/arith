@@ -186,3 +186,23 @@ func TestTrap(t *testing.T)  {
 		assert.Equal(t, ca.res, res)
 	}
 }
+
+var jumpTest = []struct{
+	ca []int
+	res int
+}{
+	{ca: []int{2,3,1}, res: 1},
+	{ca: []int{2, 3, 1, 1, 4}, res: 2},
+	{ca: []int{1, 1, 1, 1, 1}, res: 4},
+	{ca: []int{1}, res: 0},
+	{ca: []int{1,2}, res: 1},
+	{ca: []int{1,2,1,1,1}, res: 3},
+	{ca: []int{10,9,8,7,6,5,4,3,2,1,1,0}, res: 2},
+}
+
+func TestJump(t *testing.T) {
+	for _, ca := range jumpTest {
+		jumps := jump(ca.ca)
+		assert.Equal(t, ca.res, jumps)
+	}
+}

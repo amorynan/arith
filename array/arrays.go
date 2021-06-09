@@ -733,3 +733,34 @@ func trap_best(height []int) int {
 	}
 	return res
 }
+
+/*
+ 数组中的数字代表是可以jump的步数， 从 index 为0 开始 jump 到 最后一个位置，中间jump 的次数最少是多少
+[2,3,1,1,4] => 2->3->4 => res:2
+⚠️难点主要是细节注意
+ */
+func jump(nums []int) int {
+	jumps , sIdx := 0, 0
+	for sIdx < len(nums) {
+		if sIdx >= len(nums)-1 {
+			break
+		}
+		maxNextIdx := 0
+		nIdx := 0
+		for n:=sIdx+1; n <= sIdx+nums[sIdx] && n <= len(nums)-1 ; n++{
+			if n == len(nums)-1 {
+				// already jump here
+				nIdx = n
+				break
+			}
+			if nums[n]+n >= maxNextIdx{
+				maxNextIdx = nums[n]+n
+				nIdx = n
+			}
+		}
+
+		sIdx = nIdx
+		jumps ++
+	}
+	return jumps
+}
