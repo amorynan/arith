@@ -764,3 +764,20 @@ func jump(nums []int) int {
 	}
 	return jumps
 }
+
+/**
+ 🚩旋转矩阵, 还是采用矩阵的对称性
+ */
+func rotate(matrix [][]int) {
+	for i :=0 ;i < len(matrix) ; i ++ {
+		for j := i + 1; j < len(matrix); j ++ {
+			(matrix)[i][j], (matrix)[j][i] = matrix[j][i], matrix[i][j]
+		}
+	}
+
+	for i := 0; i < len(matrix) ; i ++ {
+		for j := 0; j < len(matrix) / 2 ; j ++ {
+			matrix[i][j], matrix[i][len(matrix)-j-1] = matrix[i][len(matrix)-j-1], matrix[i][j]
+		}
+	}
+}

@@ -206,3 +206,18 @@ func TestJump(t *testing.T) {
 		assert.Equal(t, ca.res, jumps)
 	}
 }
+
+var rotateMatrix = []struct{
+	matrix [][]int
+	res    [][]int
+} {
+	//{matrix: [][]int{{1}}, res: [][]int{{1}}},
+	{matrix: [][]int{{1,2,3},{4,5,6}, {7,8,9}}, res: [][]int{{7,4,1}, {8,5,2}, {9,6,3}}},
+}
+
+func TestRotate(t *testing.T) {
+	for _, ca := range rotateMatrix {
+		rotate(ca.matrix)
+		assert.Equal(t, ca.res, ca.matrix)
+	}
+}
