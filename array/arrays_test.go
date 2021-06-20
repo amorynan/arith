@@ -207,6 +207,24 @@ func TestJump(t *testing.T) {
 	}
 }
 
+var canJumpCases = []struct{
+	ca []int
+	res bool
+}{
+	{ca: []int{1,1,2,2,0,1,1}, res: true},
+	{ca: []int{2,3,1,1,4}, res: true},
+	{ca: []int{3,2,1,0,4}, res: false},
+	{ca: []int{1,1,1,0}, res: true},
+	{ca: []int{1,1,0,1}, res: false},
+}
+
+func TestCanJump(t *testing.T) {
+	for _, ca := range canJumpCases {
+		res := canJump(ca.ca)
+		assert.Equal(t, ca.res, res)
+	}
+}
+
 var rotateMatrix = []struct{
 	matrix [][]int
 	res    [][]int
@@ -219,5 +237,19 @@ func TestRotate(t *testing.T) {
 	for _, ca := range rotateMatrix {
 		rotate(ca.matrix)
 		assert.Equal(t, ca.res, ca.matrix)
+	}
+}
+
+var spiralOrderCase = []struct{
+	matrix [][]int
+	res []int
+}{
+	{matrix: [][]int{{1,2,3}, {4,5,6}, {7,8,9}}, res: []int{1,2,3,6,9,8,7,4,5}},
+	{matrix: [][]int{{1,2,3,4}, {5,6,7,8}, {9,10,11,12}}, res: []int{1,2,3,4,8,12,11,10,9,5,6,7}},
+}
+func TestSpiralOrder(t *testing.T) {
+	for _, ca := range spiralOrderCase {
+		res := spiralOrder(ca.matrix)
+		assert.Equal(t, ca.res, res)
 	}
 }

@@ -766,6 +766,60 @@ func jump(nums []int) int {
 }
 
 /**
+可以跳跃到最后一步的判断
+和上面的进行对比，由上面的方式可以做出来，只是判断最后不能跳动到最后的判断条件需要大道至简一下
+其次是还有一种可以看起来更简洁的做法
+ */
+func canJump(nums []int) bool {
+	curIdx := 0
+	for curIdx < len(nums) && curIdx + nums[curIdx] < len(nums){
+		if nums[curIdx] == 0 {
+			return false
+		}
+		maxIdx , maxNextIdx := 0, 0
+		for i:=curIdx; i <= curIdx+nums[curIdx] && i < len(nums); i++{
+			tmpNextIdx := i + nums[i]
+			if tmpNextIdx >= len(nums)-1 {
+				return true
+			}
+			if tmpNextIdx >= maxNextIdx {
+				maxIdx = i
+				maxNextIdx = tmpNextIdx
+			}
+		}
+		curIdx = maxIdx
+	}
+	return true
+}
+
+/**
+ 只需要维护一个最远的Index，即每一个nums 的数字都加上当前的index，为可出现的所有的最远的Index
+ 如果发现遍历到的某一个idx 下，当前的idx 已经大于 最远能跳到的Index，那就说明已经跳不到最远了
+ */
+func canJump_simple(nums []int) bool {
+	if len(nums) == 0 {
+		return false
+	}
+	if len(nums) == 1 {
+		return true
+	}
+
+	maxJumpIdx := 0
+	for i, v := range nums {
+		if maxJumpIdx == len(nums)-1 {
+			return true
+		}
+		if i > maxJumpIdx {
+			return false
+		}
+		if maxJumpIdx < i+v {
+			maxJumpIdx = i+v
+		}
+	}
+	return true
+}
+
+/**
  🚩旋转矩阵, 还是采用矩阵的对称性
  */
 func rotate(matrix [][]int) {
@@ -780,4 +834,46 @@ func rotate(matrix [][]int) {
 			matrix[i][j], matrix[i][len(matrix)-j-1] = matrix[i][len(matrix)-j-1], matrix[i][j]
 		}
 	}
+}
+
+/**
+ ⚠️一次通过还需要注意很多细节
+	 小技巧就是判断完成的条件是确定的
+ */
+func spiralOrder(matrix [][]int) []int {
+	edgeRowFrom, edgeRowTo, edgeColLeft, edgeColRight, row, col, res := 0, len(matrix), 0, len(matrix[0]), 0, 0, make([]int, 0, len(matrix)*len(matrix[0]))
+
+	for cap(res) != len(res) {
+		// col from left to right
+		for cap(res) != len(res) && col < edgeColRight {
+			res = append(res, matrix[row][col])
+			col ++
+		}
+		col --
+		// row from top to down
+		for cap(res) != len(res) && row < edgeRowTo-1 {
+			row ++
+			res = append(res, matrix[row][col])
+		}
+
+		// col from right to left
+		for cap(res) != len(res) && col > edgeColLeft {
+			col --
+			res = append(res, matrix[row][col])
+		}
+		// row  from down to up
+		row --
+		for cap(res) != len(res) && row > edgeRowFrom {
+			res = append(res, matrix[row][col])
+			row --
+		}
+
+		edgeRowFrom++
+		edgeRowTo--
+		edgeColLeft++
+		edgeColRight--
+		row++
+		col++
+	}
+	return res
 }
