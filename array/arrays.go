@@ -877,3 +877,51 @@ func spiralOrder(matrix [][]int) []int {
 	}
 	return res
 }
+
+/**
+ 合并区间
+ 给定一些区间，尽可能合并一些交叉的区间，最后得到所有区间
+	最重要的其实是前面区间的排序过程, quick sort or other may choose
+ */
+func merge(intervals [][]int) [][]int {
+	if len(intervals) < 2 {
+		return intervals
+	}
+	// sort the matrix
+	m := make(map[int][]int, 0)
+	keys := make([]int, 0)
+	for _, item := range intervals {
+		if _, exist := m[item[0]]; !exist {
+			m[item[0]] = make([]int, 0)
+			keys = append(keys, item[0])
+		}
+		m[item[0]] = append(m[item[0]], item[1])
+	}
+	sort.Ints(keys)
+
+	intervals = make([][]int, 0)
+	for _, k := range keys {
+		for _, v := range m[k] {
+			intervals = append(intervals, []int{k, v})
+		}
+	}
+
+	// merge the intervals
+	res := make([][]int, 0)
+	for _, item := range intervals {
+		if len(res) == 0 {
+			res = append(res, item)
+			continue
+		}
+		lastItem := res[len(res)-1]
+		if item[0] <= lastItem[1] {
+			// merge
+			if lastItem[1] < item[1] {
+				res[len(res)-1][1] = item[1]
+			}
+			continue
+		}
+		res = append(res, item)
+	}
+	return res
+}
