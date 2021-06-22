@@ -878,6 +878,56 @@ func spiralOrder(matrix [][]int) []int {
 	return res
 }
 
+func generateMatrix(n int) [][]int {
+
+	// go through the matrix and put val to it
+	row, col, rowEdgeMin, rowEdgeMax, colEdgeMin, colEdgeMax :=0,0, 0, n, 0, n
+	res := make([][]int, n, n)
+	for i,_ := range res {
+		res[i] = make([]int, n, n)
+	}
+	cnt := 1
+	lastCnt := n*n
+
+	for row <= n / 2 {
+		// from left to right
+		for cnt < lastCnt && col < colEdgeMax-1 {
+			res[row][col] = cnt
+			cnt++
+			col ++
+		}
+		// from top to down
+		for cnt < lastCnt && row < rowEdgeMax-1 {
+			res[row][col] = cnt
+			cnt++
+			row ++
+		}
+		// from right to left
+		for cnt < lastCnt && col > colEdgeMin  {
+			res[row][col] = cnt
+			cnt++
+			col --
+		}
+		// from down to top
+		for cnt <= lastCnt && row > colEdgeMin {
+			res[row][col] = cnt
+			cnt++
+			row --
+		}
+
+		row++
+		col++
+		rowEdgeMin++
+		rowEdgeMax--
+		colEdgeMin++
+		colEdgeMax--
+	}
+	if n % 2 != 0 {
+		res[n/2][n/2] = cnt
+	}
+	return res
+}
+
 /**
  合并区间
  给定一些区间，尽可能合并一些交叉的区间，最后得到所有区间

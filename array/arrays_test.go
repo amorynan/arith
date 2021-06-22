@@ -253,3 +253,20 @@ func TestSpiralOrder(t *testing.T) {
 		assert.Equal(t, ca.res, res)
 	}
 }
+
+var generateMatrixCase = []struct{
+	length int
+	res [][]int
+}{
+	{length: 1, res: [][]int{{1}}},
+	{length: 2, res: [][]int{{1,2}, {4,3}}},
+	{length: 3, res: [][]int{{1,2,3},{8,9,4}, {7,6,5}}},
+	{length: 4, res: [][]int{{1,2,3,4},{12,13,14,5},{11,16,15,6},{10,9,8,7}}},
+}
+
+func TestGenerateMatrix(t *testing.T)  {
+	for _, ca := range generateMatrixCase {
+		res := generateMatrix(ca.length)
+		assert.Equal(t, ca.res, res)
+	}
+}
