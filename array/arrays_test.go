@@ -270,3 +270,20 @@ func TestGenerateMatrix(t *testing.T)  {
 		assert.Equal(t, ca.res, res)
 	}
 }
+
+var pathCases = []struct {
+	m   int
+	n   int
+	res int
+}{
+	{m: 3, n:2, res: 3},
+	{m: 3, n:7, res: 28},
+	{m: 51, n:9, res: 1916797311},
+}
+
+func TestUniquePath(t *testing.T)  {
+	for _, ca := range pathCases {
+		res := uniquePaths(ca.m, ca.n)
+		assert.Equal(t, ca.res, res)
+	}
+}

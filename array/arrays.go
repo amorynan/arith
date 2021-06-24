@@ -975,3 +975,78 @@ func merge(intervals [][]int) [][]int {
 	}
 	return res
 }
+
+var lastRow, lastCol = 0, 0
+
+func uniquePathsWithRecursion(m int, n int) int {
+	if m == 1 || n == 1 {
+		return 1
+	}
+	lastRow, lastCol = m-1, n-1
+	res := 0
+	seekTarget(0, 0, &res)
+	return res
+}
+
+func seekTarget(row, col int, res *int) {
+	// find finish
+	if row == lastRow || col == lastCol {
+		*res ++
+		return
+	}
+
+	if col <= lastCol && row <= lastRow {
+		seekTarget(row, col+1, res)
+		seekTarget(row+1, col, res)
+	}
+
+}
+
+func uniquePaths(m int, n int) int {
+	// recursion method
+	//return uniquePathsWithRecursion(m int, n int)
+
+
+	// dp function 1
+
+	//return uniquePathsWithDpOne(m, n)
+	// m is small
+	if m > n {
+		m, n = n, m
+	}
+
+	dp := make([]int, m, m)
+
+
+	for b := 0; b < n; b ++ {
+		for s := 0; s < m; s ++ {
+			if b == 0 || s == 0 {
+				dp[s] = 1
+				continue
+			}
+
+			dp[s] = dp[s] + dp[s-1]
+		}
+	}
+	return dp[m-1]
+}
+
+
+func uniquePathsWithDpOne(m, n int) int {
+	dp := make([][]int, m)
+	for i := range dp {
+		dp[i] = make([]int, n)
+	}
+
+	for row := 0; row < m;  row++{
+		for col := 0; col < n; col++ {
+			if row == 0 || col == 0{
+				dp[row][col] = 1
+				continue
+			}
+
+			dp[row][col] = dp[row-1][col] + dp[row][col-1]
+		}
+	}
+	return dp[m-1][n-1]
+}
