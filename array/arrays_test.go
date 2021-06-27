@@ -6,6 +6,34 @@ import (
 	"testing"
 )
 
+func TestArrayMake(t *testing.T)  {
+	ta := make([]int, 0, 1)
+	assert.NotNil(t, ta)
+	ta = append(ta, 1)
+	assert.Equal(t, len(ta),1)
+
+	tasss :=  make([]int, 0)
+	assert.NotNil(t, ta)
+	tasss = append(tasss, 1)
+	assert.Equal(t, len(tasss),1)
+
+	tas := make([]int, 35, 35)
+	tas = append(tas, 1)
+	assert.Equal(t, len(tas),36)
+	assert.Equal(t, 1, tas[35])
+
+	tass := make([]int, 35)
+	tass = append(tass, 1)
+	assert.Equal(t, len(tass),36)
+	assert.Equal(t, 1, tas[35])
+
+	tt := make([]int, 0, 35)
+	tt = append(tt, 1)
+	assert.Equal(t, len(tt), 1)
+	assert.Equal(t, 1, tt[0])
+
+}
+
 var twoSumCases = []struct {
 	nums []int
 	target int
@@ -285,5 +313,50 @@ func TestUniquePath(t *testing.T)  {
 	for _, ca := range pathCases {
 		res := uniquePaths(ca.m, ca.n)
 		assert.Equal(t, ca.res, res)
+	}
+}
+
+var setCase = []struct{
+	ma [][]int
+	res [][]int
+}{
+	{ma: [][]int{{1,0,3}}, res: [][]int{{0,0,0}}},
+	{ma: [][]int{{1,1,1}, {1,0,1}, {1,1,1}}, res: [][]int{{1,0,1}, {0,0,0}, {1,0,1}}},
+	{ma: [][]int{{0,1,2,0},{3,4,5,2},{1,3,1,5}}, res: [][]int{{0,0,0,0},{0,4,5,0},{0,3,1,0}}},
+}
+func TestSetZeros(t *testing.T)  {
+	for _, ca := range setCase {
+		setZeroes(ca.ma)
+		assert.Equal(t, ca.res, ca.ma)
+	}
+}
+
+var searchMatrixCase = []struct {
+	matrix [][]int
+	target int
+	find  bool
+}{
+	{matrix: [][]int{{1,3,5,7},{10,11,16,20},{23,30,34,60}}, target: 9, find: false},
+}
+func TestSearchMatrix(t *testing.T) {
+	for _, ca := range searchMatrixCase {
+		res := searchMatrix(ca.matrix, ca.target)
+		assert.Equal(t, ca.find, res)
+	}
+
+}
+var sudoCase = []struct {
+	matrix [][]byte
+	find  bool
+}{
+	{matrix: [][]byte{{'5','3','.','.','7','.','.','.','.'},{'6','.','.','1','9','5','.','.','.'},{'.','9','8','.','.','.','.','6','.'},
+		{'8','.','.','.','6','.','.','.','3'},{'4','.','.','8','.','3','.','.','1'},{'7','.','.','.','2','.','.','.','6'},
+		{'.','6','.','.','.','.','2','8','.'}, {'.','.','.','4','1','9','.','.','5'},{'.','.','.','.','8','.','.','7','9'}},  find: true},
+}
+func TestSudoku(t *testing.T){
+	for _, ca := range sudoCase {
+		res := isValidSudoku(ca.matrix)
+		assert.Equal(t, ca.find, res)
+
 	}
 }

@@ -1050,3 +1050,177 @@ func uniquePathsWithDpOne(m, n int) int {
 	}
 	return dp[m-1][n-1]
 }
+
+/**
+set zero
+需要空间复杂度是常量级别的
+ */
+func setZeroes(matrix [][]int)  {
+	rowsToBeSet := make([]int,0,len(matrix))
+	colsToBeSet := make([]int,0, len(matrix[0]))
+
+	for r := 0; r < len(matrix); r++{
+		for c := 0; c < len(matrix[0]); c ++ {
+			if matrix[r][c] == 0 {
+				if len(colsToBeSet) == 0 || (len(colsToBeSet)>0 && colsToBeSet[len(colsToBeSet)-1] != c) {
+					colsToBeSet = append(colsToBeSet, c)
+				}
+				if  len(rowsToBeSet) == 0 || len(rowsToBeSet)>0 && rowsToBeSet[len(rowsToBeSet)-1] != r {
+					rowsToBeSet = append(rowsToBeSet, r)
+				}
+			}
+		}
+	}
+
+	for _, r := range rowsToBeSet {
+		for c := 0; c < len(matrix[0]); c ++ {
+			*&matrix[r][c] = 0
+		}
+	}
+
+	for _, c := range colsToBeSet {
+		for r := 0; r < len(matrix); r ++ {
+			*&matrix[r][c] = 0
+		}
+	}
+}
+/**
+	在矩阵中查找值
+重要点是 如何 映射指针下标到 数组下标
+ */
+func searchMatrixWithTwiceBinarySearch(matrix [][]int, target int) bool {
+	sr, er, hr := 0, len(matrix)-1, 0
+	for sr <= er {
+		hr = (sr + er) >> 1
+		if matrix[hr][len(matrix[0])-1] == target {
+			return true
+		}
+		if matrix[hr][len(matrix[0])-1] < target {
+			sr = hr+1
+		}else {
+			er = hr-1
+		}
+	}
+	if sr > len(matrix)-1 {
+		return false
+	}
+
+	sc, ec, hc := 0, len(matrix[0])-1, 0
+	for sc <= ec {
+		hc = (sc + ec ) >> 1
+		if matrix[sr][hc] == target{
+			return true
+		}
+		if matrix[sr][hc] < target {
+			sc = hc+1
+		}else {
+			ec = hc-1
+		}
+	}
+	return false
+}
+
+/**
+ 只需要一次二分查找
+ */
+func searchMatrix(matrix [][]int, target int) bool {
+	// search with twice binary search
+	//return searchMatrixWithTwiceBinarySearch(matrix, target)
+	s, e, m := 0, len(matrix) * len(matrix[0]) - 1, 0
+
+	for s <= e {
+		m = (s + e) >> 1
+
+		if matrix[m/len(matrix[0])][m-m/len(matrix[0])*len(matrix[0])] == target {
+			return true
+		}
+		if matrix[m/len(matrix[0])][m%len(matrix[0])] < target {
+			s = m + 1
+		}else {
+			e = m-1
+		}
+	}
+	return false
+}
+
+/*
+ 数独判断，
+ 重点是如何在一次循环中判断完成所有不重复的0-9
+ 特别是在矩阵中辨识 数独中的 格子的
+ */
+func isValidSudoku(board [][]byte) bool {
+	// 暴力破解
+	//isValidSudokuRough(board)
+	// for every col , row and box add a 9 index * 9
+	rowCache, colCache, boxCache := make([][]bool, 9) , make([][]bool, 9), make([][]bool, 9)
+	for i, _ := range rowCache {
+		rowCache[i] = make([]bool, 9)
+	}
+	for i, _ := range colCache {
+		colCache[i] = make([]bool, 9)
+	}
+	for i, _ := range boxCache {
+		boxCache[i] = make([]bool, 9)
+	}
+	for r:=0; r < 9 ; r ++ {
+		for c:=0; c < 9; c++{
+			if board[r][c] == '.' {
+				continue
+			}
+			num := board[r][c] - '0' - byte(1)
+			if rowCache[r][num] || colCache[c][num] || boxCache[r/3*3+c/3][num] {
+				return false
+			}
+			rowCache[r][num] = true
+			colCache[c][num] = true
+			boxCache[r/3*3+c/3][num] = true
+		}
+	}
+	return true
+}
+func isValidSudokuRough(board [][]byte) bool {
+
+	checkMap := make(map[byte]struct{}, 0)
+	for r:=0; r<9; r++{
+		for c:=0; c<9; c++ {
+			if _, exist := checkMap[board[r][c]]; exist {
+				return false
+			}
+			if board[r][c] != '.' {
+				checkMap[board[r][c]] = struct{}{}
+			}
+		}
+		checkMap = make(map[byte]struct{}, 0)
+	}
+	checkMap = make(map[byte]struct{}, 0)
+	for c:=0; c<9; c++{
+		for r:=0; r<9; r++ {
+			if _, exist := checkMap[board[r][c]]; exist {
+				return false
+			}
+			if board[r][c] != '.' {
+				checkMap[board[r][c]] = struct{}{}
+			}
+		}
+		checkMap = make(map[byte]struct{}, 0)
+	}
+
+
+	for r:=0; r <= 6; r = r + 3 {
+		for c:=0; c <= 6; c = c+3{
+			checkMap = make(map[byte]struct{}, 0)
+			for ri := r ; ri < r+3; ri++ {
+				for ci := c ; ci < c+3; ci++ {
+					if _, exist := checkMap[board[ri][ci]]; exist {
+						return false
+					}
+					if board[ri][ci] != '.' {
+						checkMap[board[ri][ci]] = struct{}{}
+					}
+				}
+			}
+		}
+	}
+
+	return true
+}
