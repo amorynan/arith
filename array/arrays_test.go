@@ -1,6 +1,7 @@
 package array
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"sort"
 	"testing"
@@ -358,5 +359,12 @@ func TestSudoku(t *testing.T){
 		res := isValidSudoku(ca.matrix)
 		assert.Equal(t, ca.find, res)
 
+	}
+}
+
+func TestSolveSudoku(t *testing.T) {
+	for _, ca := range sudoCase {
+		solveSudoku(ca.matrix)
+		fmt.Printf("%+v\v", ca.matrix)
 	}
 }

@@ -1,6 +1,85 @@
 package array
 
-import "sort"
+import (
+	"fmt"
+	"sort"
+)
+
+// ======================== recursive ===============================
+func uniquePathsWithRecursion(m int, n int) int {
+	if m == 1 || n == 1 {
+		return 1
+	}
+	lastRow, lastCol = m-1, n-1
+	res := 0
+	seekTarget(0, 0, &res)
+	return res
+}
+
+func seekTarget(row, col int, res *int) {
+	// find finish
+	if row == lastRow || col == lastCol {
+		*res ++
+		return
+	}
+
+	if col <= lastCol && row <= lastRow {
+		seekTarget(row, col+1, res)
+		seekTarget(row+1, col, res)
+	}
+
+}
+
+func uniquePaths(m int, n int) int {
+	// recursion method
+	//return uniquePathsWithRecursion(m int, n int)
+
+
+	// dp function 1
+
+	//return uniquePathsWithDpOne(m, n)
+	// m is small
+	if m > n {
+		m, n = n, m
+	}
+
+	dp := make([]int, m, m)
+
+
+	for b := 0; b < n; b ++ {
+		for s := 0; s < m; s ++ {
+			if b == 0 || s == 0 {
+				dp[s] = 1
+				continue
+			}
+
+			dp[s] = dp[s] + dp[s-1]
+		}
+	}
+	return dp[m-1]
+}
+
+
+func uniquePathsWithDpOne(m, n int) int {
+	dp := make([][]int, m)
+	for i := range dp {
+		dp[i] = make([]int, n)
+	}
+
+	for row := 0; row < m;  row++{
+		for col := 0; col < n; col++ {
+			if row == 0 || col == 0{
+				dp[row][col] = 1
+				continue
+			}
+
+			dp[row][col] = dp[row-1][col] + dp[row][col-1]
+		}
+	}
+	return dp[m-1][n-1]
+}
+
+
 
 //========================== 加和 =======================================
 func twoSum(nums []int, target int) []int {
@@ -819,6 +898,7 @@ func canJump_simple(nums []int) bool {
 	return true
 }
 
+// ===================================== 矩阵 matrix  ====================================
 /**
  🚩旋转矩阵, 还是采用矩阵的对称性
  */
@@ -978,78 +1058,6 @@ func merge(intervals [][]int) [][]int {
 
 var lastRow, lastCol = 0, 0
 
-func uniquePathsWithRecursion(m int, n int) int {
-	if m == 1 || n == 1 {
-		return 1
-	}
-	lastRow, lastCol = m-1, n-1
-	res := 0
-	seekTarget(0, 0, &res)
-	return res
-}
-
-func seekTarget(row, col int, res *int) {
-	// find finish
-	if row == lastRow || col == lastCol {
-		*res ++
-		return
-	}
-
-	if col <= lastCol && row <= lastRow {
-		seekTarget(row, col+1, res)
-		seekTarget(row+1, col, res)
-	}
-
-}
-
-func uniquePaths(m int, n int) int {
-	// recursion method
-	//return uniquePathsWithRecursion(m int, n int)
-
-
-	// dp function 1
-
-	//return uniquePathsWithDpOne(m, n)
-	// m is small
-	if m > n {
-		m, n = n, m
-	}
-
-	dp := make([]int, m, m)
-
-
-	for b := 0; b < n; b ++ {
-		for s := 0; s < m; s ++ {
-			if b == 0 || s == 0 {
-				dp[s] = 1
-				continue
-			}
-
-			dp[s] = dp[s] + dp[s-1]
-		}
-	}
-	return dp[m-1]
-}
-
-
-func uniquePathsWithDpOne(m, n int) int {
-	dp := make([][]int, m)
-	for i := range dp {
-		dp[i] = make([]int, n)
-	}
-
-	for row := 0; row < m;  row++{
-		for col := 0; col < n; col++ {
-			if row == 0 || col == 0{
-				dp[row][col] = 1
-				continue
-			}
-
-			dp[row][col] = dp[row-1][col] + dp[row][col-1]
-		}
-	}
-	return dp[m-1][n-1]
-}
 
 /**
 set zero
@@ -1223,4 +1231,104 @@ func isValidSudokuRough(board [][]byte) bool {
 	}
 
 	return true
+}
+
+/**
+ 🏁🏁 解数独
+	还是需要注意dfs 中 定义的辅助数据的变化, 以及归来的过程这些辅助数据的还原
+ */
+type EmptyPostion struct {
+	row int
+	col int
+}
+func solveSudoku(board [][]byte)  {
+	rowCache, colCache, boxCache, emptyPos := make([][]bool, 9), make([][]bool,9), make([][]bool, 9), make([]EmptyPostion, 0)
+	for i := range rowCache {
+		rowCache[i] = make([]bool, 9)
+	}
+	for i := range rowCache {
+		colCache[i] = make([]bool, 9)
+	}
+	for i := range rowCache {
+		boxCache[i] = make([]bool, 9)
+	}
+	// first cache all dimension that value already show up
+	for r:=0; r<9; r++ {
+		for c:=0; c<9; c++{
+			if board[r][c] == '.' {
+				emptyPos = append(emptyPos, EmptyPostion{row: r, col: c})
+				continue
+			}
+			num := board[r][c] - '0' - byte(1)
+			rowCache[r][num] = true
+			colCache[c][num] = true
+			boxCache[r/3*3+c/3][num] = true
+		}
+	}
+
+	// recursive for put value
+	ok := putValueRecursive(emptyPos, 0 ,&board, &rowCache, &colCache, &boxCache)
+	//var putValueRecursive func(int) bool
+	//putValueRecursive = func(idx int) bool {
+	//	if idx == len(emptyPos) {
+	//		// end
+	//		return true
+	//	}
+	//
+	//
+	//	for i:=0 ; i < 9 ; i++ {
+	//		if rowCache[emptyPos[idx].row][i] || colCache[emptyPos[idx].col][i] || boxCache[emptyPos[idx].row/3*3+emptyPos[idx].col/3][i] {
+	//			// exist
+	//			continue
+	//		}
+	//		board[emptyPos[idx].row][emptyPos[idx].col] = byte(i+1)+'0'
+	//		rowCache[emptyPos[idx].row][i] = true
+	//		colCache[emptyPos[idx].col][i] = true
+	//		boxCache[emptyPos[idx].row/3*3+emptyPos[idx].col/3][i] = true
+	//
+	//		ok := putValueRecursive(idx+1)
+	//		if ok {
+	//			return true
+	//		}
+	//		// continue with next possible value
+	//		board[emptyPos[idx].row][emptyPos[idx].col] = '.'
+	//		rowCache[emptyPos[idx].row][i] = false
+	//		colCache[emptyPos[idx].col][i] = false
+	//		boxCache[emptyPos[idx].row/3*3+emptyPos[idx].col/3][i] = false
+	//	}
+	//	return false
+	//}
+	//ok := putValueRecursive(0)
+	fmt.Println(ok)
+}
+//
+func putValueRecursive(emptyPos []EmptyPostion, idx int,board *[][]byte, rowCache, colCache, boxCache *[][]bool) bool {
+	if idx == len(emptyPos) {
+		// end
+		return true
+	}
+
+
+	for i:=0 ; i < 9 ; i++ {
+		if (*rowCache)[emptyPos[idx].row][i] || (*colCache)[emptyPos[idx].col][i] || (*boxCache)[emptyPos[idx].row/3*3+emptyPos[idx].col/3][i] {
+			// exist
+			continue
+		}
+		(*board)[emptyPos[idx].row][emptyPos[idx].col] = byte(i+1)+'0'
+		(*rowCache)[emptyPos[idx].row][i] = true
+		(*colCache)[emptyPos[idx].col][i] = true
+		(*boxCache)[emptyPos[idx].row/3*3+emptyPos[idx].col/3][i] = true
+
+		ok := putValueRecursive(emptyPos, idx+1, board, rowCache, colCache, boxCache)
+		if ok {
+			// already find , and do not continue
+			return true
+		}
+		// continue with next possible value
+		(*board)[emptyPos[idx].row][emptyPos[idx].col] = '.'
+		(*rowCache)[emptyPos[idx].row][i] = false
+		(*colCache)[emptyPos[idx].col][i] = false
+		(*boxCache)[emptyPos[idx].row/3*3+emptyPos[idx].col/3][i] = false
+	}
+	return false
 }
