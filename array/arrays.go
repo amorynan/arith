@@ -2,6 +2,7 @@ package array
 
 import (
 	"fmt"
+	"math/bits"
 	"sort"
 )
 
@@ -1268,37 +1269,6 @@ func solveSudoku(board [][]byte)  {
 
 	// recursive for put value
 	ok := putValueRecursive(emptyPos, 0 ,&board, &rowCache, &colCache, &boxCache)
-	//var putValueRecursive func(int) bool
-	//putValueRecursive = func(idx int) bool {
-	//	if idx == len(emptyPos) {
-	//		// end
-	//		return true
-	//	}
-	//
-	//
-	//	for i:=0 ; i < 9 ; i++ {
-	//		if rowCache[emptyPos[idx].row][i] || colCache[emptyPos[idx].col][i] || boxCache[emptyPos[idx].row/3*3+emptyPos[idx].col/3][i] {
-	//			// exist
-	//			continue
-	//		}
-	//		board[emptyPos[idx].row][emptyPos[idx].col] = byte(i+1)+'0'
-	//		rowCache[emptyPos[idx].row][i] = true
-	//		colCache[emptyPos[idx].col][i] = true
-	//		boxCache[emptyPos[idx].row/3*3+emptyPos[idx].col/3][i] = true
-	//
-	//		ok := putValueRecursive(idx+1)
-	//		if ok {
-	//			return true
-	//		}
-	//		// continue with next possible value
-	//		board[emptyPos[idx].row][emptyPos[idx].col] = '.'
-	//		rowCache[emptyPos[idx].row][i] = false
-	//		colCache[emptyPos[idx].col][i] = false
-	//		boxCache[emptyPos[idx].row/3*3+emptyPos[idx].col/3][i] = false
-	//	}
-	//	return false
-	//}
-	//ok := putValueRecursive(0)
 	fmt.Println(ok)
 }
 //
@@ -1331,4 +1301,152 @@ func putValueRecursive(emptyPos []EmptyPostion, idx int,board *[][]byte, rowCach
 		(*boxCache)[emptyPos[idx].row/3*3+emptyPos[idx].col/3][i] = false
 	}
 	return false
+}
+
+// 上面的空间压缩，将[]bool 换成 一个 int 数, 然后做反人类的位运算
+
+/**
+ 保证不重复的数字进入缓存数组中，对应的坐标上是存在left+'1'的值的
+ */
+func flip(leftSub byte, rowCache, colCache , boxCache *[]int, r, c, b int) {
+	(*rowCache)[r] ^= 1 << leftSub
+	(*colCache)[c] ^= 1 << leftSub
+	(*boxCache)[b] ^= 1 << leftSub
+}
+func solveSudokuInBit(board [][]byte) {
+	// cache for row and col and uint box and empty position
+	rowCache, colCache, boxCache := make([]int, 9), make([]int, 9), make([]int, 9)
+	emptyPos := make([]EmptyPostion, 0)
+
+	for r:=0; r<9; r++{
+		for c:=0; c<9; c++{
+			if board[r][c] == '.' {
+				emptyPos = append(emptyPos, EmptyPostion{
+					row: r,
+					col: c,
+				})
+			}else {
+				flip(board[r][c]-'1', &rowCache, &colCache, &boxCache, r, c, r/3*3+c/3)
+			}
+		}
+	}
+	putValueRecursiveWithBit(emptyPos, 0, &rowCache, &colCache, &boxCache, &board)
+}
+
+func putValueRecursiveWithBit(emptyPos []EmptyPostion, idx int, rowCache, colCache , boxCache *[]int, board *[][]byte) bool {
+	 if idx == len(emptyPos) {
+	 	return true
+	 }
+	// 先找到缓存中可以被设置的有哪些值， valueMask 是后面9个1中，可以被填入值的1 的数, 0x1ff 是代表二进制中后面是9个1的数字
+	valueMask := 0x1ff & ^uint((*rowCache)[emptyPos[idx].row] |	(*colCache)[emptyPos[idx].col] | (*boxCache)[emptyPos[idx].row/3*3+emptyPos[idx].col/3])
+	for ;valueMask > 0 ; valueMask &= valueMask - 1{ // 将最后一个1 变成0之后，就可以继续拿到下一个最后一个1
+		// 拿到最后一个1的值作为可以填入的数字 => 获取后面有多少个0，然后左移1的数就是要填入缓存的值
+		zeroCount := byte(bits.TrailingZeros(valueMask))
+		flip(zeroCount, rowCache, colCache, boxCache, emptyPos[idx].row, emptyPos[idx].col, emptyPos[idx].row/3*3+emptyPos[idx].col/3)
+		(*board)[emptyPos[idx].row][emptyPos[idx].col] = zeroCount+'1'
+		if putValueRecursiveWithBit(emptyPos, idx+1, rowCache, colCache, boxCache, board) {
+			return true
+		}
+		(*board)[emptyPos[idx].row][emptyPos[idx].col] = '.'
+		flip(zeroCount, rowCache, colCache, boxCache, emptyPos[idx].row, emptyPos[idx].col, emptyPos[idx].row/3*3+emptyPos[idx].col/3)     
+	}
+	return false
+}
+
+/**
+ 温习： 不重复数组全排列
+ */
+func Permutation(nums []int) [][]int{
+	res, subItems, used := make([][]int, 0), make([]int, 0, len(nums)), make([]bool, len(nums))
+	setSubItemPermutation(&res, &subItems, nums, 0, &used)
+	return res
+}
+
+func setSubItemPermutation(res *[][]int, subItems *[]int, nums []int, idx int, used *[]bool){
+	if idx == len(nums) {
+		items := make([]int, len(nums))
+		copy(items, *subItems)
+		*res = append(*res, items)
+		return
+	}
+	for i := 0; i < len(nums); i ++ {
+		if (*used)[i] {
+			continue
+		}
+		*subItems = append(*subItems, nums[i])
+		(*used)[i] = true
+		setSubItemPermutation(res, subItems, nums, idx+1, used)
+		*subItems = (*subItems)[:idx]
+		(*used)[i] = false
+	}
+}
+
+/**
+	温习：数组有可重复数据，结果数据集中不需要一样的数据集
+ */
+func PermuteUnique(nums []int) [][]int {
+	sort.Ints(nums)
+	res, subItems, used := make([][]int, 0), make([]int, 0, len(nums)), make([]bool, len(nums))
+	setSubItemPermutationUnique(&res, &subItems, &used, nums, 0)
+	return res
+}
+
+func setSubItemPermutationUnique(res *[][]int, subItems *[]int, used *[]bool, nums []int, idx int)  {
+	if len(nums) == idx {
+		item := make([]int, len(nums))
+		copy(item, *subItems)
+		*res = append(*res, item)
+		return
+	}
+
+	for i := 0; i < len(nums) ; i ++{
+		if (*used)[i] || (i>0 && (*used)[i-1] && nums[i] == nums[i-1]){
+			continue
+		}
+		*subItems = append(*subItems, nums[i])
+		(*used)[i] = true
+		setSubItemPermutationUnique(res, subItems, used, nums, idx+1)
+		*subItems = (*subItems)[:idx]
+		(*used)[i] = false
+	}
+}
+
+func solveNQueens(n int) [][]string {
+	res, subRes, availableCols, availablePositiveSlash, availableNegativeSlash :=
+		make([][]string, 0), make([]string, n), make([]bool, n), make([]bool, 2*n-1), make([]bool, 2*n-1)
+	for i:=0; i<len(res); i++{
+		res[i] = make([]string, n)
+	}
+	setQueue(n, 0, &availableCols, &availablePositiveSlash, &availableNegativeSlash, &subRes, &res)
+	return res
+}
+
+func setQueue(n, idx int, availableCols, availablePositiveSlash, availableNegativeSlash *[]bool, subRes *[]string, res *[][]string) {
+	if idx == n {
+		item := make([]string, len(*subRes))
+		copy(item, *subRes)
+		*res = append(*res, item)
+		return
+	}
+
+
+	for c:=0; c < n; c ++{
+			if  (*availableCols)[c] || (*availablePositiveSlash)[idx+c] || (*availableNegativeSlash)[n-1-c+idx]{
+				continue
+			}
+			(*availableCols)[c], (*availablePositiveSlash)[idx+c], (*availableNegativeSlash)[n-1-c+idx]= true, true, true
+			row := make([]byte, n)
+			for i := 0; i < n; i ++{
+				if i == c {
+					row[i] = 'Q'
+				}else {
+					row[i] = '.'
+				}
+			}
+			(*subRes)[idx] = string(row)
+			setQueue(n, idx+1, availableCols, availablePositiveSlash, availableNegativeSlash, subRes, res)
+			(*availableCols)[c], (*availablePositiveSlash)[idx+c], (*availableNegativeSlash)[n-1-c+idx]= false, false, false
+			(*subRes)[idx] = ""
+	}
+	return
 }

@@ -368,3 +368,47 @@ func TestSolveSudoku(t *testing.T) {
 		fmt.Printf("%+v\v", ca.matrix)
 	}
 }
+
+func TestOp(t *testing.T) {
+	test := []int{1,3,4}
+	test = append(test[:2], test[3:]...)
+	t.Log(test)
+	a := uint(1)
+	b := ^a
+	c := b^a
+	t.Logf("b :%v, c:%v", b, c)
+	//t.Log(bits.TrailingZeros8(uint8(10)))
+}
+
+var permutationCases = []struct{
+	nums []int
+}{
+	//{nums: []int{1,2,3}},
+	//{nums: []int{1, 2}},
+	{nums: []int{3,3,0,3}},
+}
+
+func TestPermutationCase(t *testing.T) {
+	for _, ca := range permutationCases {
+		res := Permutation(ca.nums)
+		resUnique := PermuteUnique(ca.nums)
+		t.Logf("not unique:%v", res)
+		t.Logf("unique:%v", resUnique)
+
+	}
+}
+
+var queueCase = []struct {
+	n int
+	res [][]string
+}{
+	{n: 4, res: [][]string{{".Q..","...Q","Q...","..Q."}, {"..Q.","Q...", "...Q", ".Q.." }}},
+}
+
+func TestSolveQueue(t *testing.T)  {
+	for _, ca := range queueCase {
+		res := solveNQueens(ca.n)
+		assert.Equal(t, res, ca.res)
+	}
+}
+
