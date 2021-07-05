@@ -899,6 +899,38 @@ func canJump_simple(nums []int) bool {
 	return true
 }
 
+/**
+  仅用一次遍历排列有限的，🇳🇱 问题， 双指针和计数排序方式
+ */
+func sortColors(nums []int)  {
+	rp, bp := 0, len(nums)-1
+
+loop:
+	for rp < bp {
+		for rp < bp && nums[rp] == 0 {
+			rp ++
+		}
+		for rp < bp && nums[bp] == 2 {
+			bp --
+		}
+
+		if rp != bp {
+			nums[rp], nums[bp] = nums[bp], nums[rp]
+		}
+
+		if nums[rp] == 1 {
+			sp := rp +1
+			for sp < bp && nums[sp] == 1 {
+				sp++
+			}
+			if sp == bp {
+				break loop
+			}
+			nums[rp], nums[sp] = nums[sp], nums[rp]
+		}
+	}
+}
+
 // ===================================== 矩阵 matrix  ====================================
 /**
  🚩旋转矩阵, 还是采用矩阵的对称性
@@ -1092,6 +1124,111 @@ func setZeroes(matrix [][]int)  {
 			*&matrix[r][c] = 0
 		}
 	}
+}
+
+func setZerosWithNoSpace(matrix [][]int) {
+	firstRowZero, firstColZero := false, false
+
+	for r:=0; r < len(matrix); r++{
+		if matrix[r][0] == 0 {
+			firstColZero = true
+			break
+		}
+	}
+	for r:=0; r < len(matrix[0]); r++{
+		if matrix[0][r] == 0 {
+			firstRowZero = true
+			break
+		}
+	}
+
+	for r := 1; r < len(matrix); r ++ {
+		for c := 1; c < len(matrix[0]); c ++ {
+			if matrix[r][c] == 0 {
+				matrix[r][0] = 0
+				matrix[0][c] = 0
+			}
+		}
+	}
+
+	for r := 1; r < len(matrix); r ++ {
+		if matrix[r][0] == 0 {
+			for c := 1; c<len(matrix[0]); c ++ {
+				matrix[r][c] = 0
+			}
+		}
+	}
+
+	for c := 1; c < len(matrix[0]); c ++{
+		if matrix[0][c] == 0 {
+			for r := 1; r<len(matrix); r ++ {
+				matrix[r][c] = 0
+			}
+		}
+	}
+
+	if firstRowZero {
+		for c := 0; c < len(matrix[0]); c ++{
+			matrix[0][c] = 0
+		}
+	}
+
+	if firstColZero {
+		for r := 0; r < len(matrix); r ++{
+			matrix[r][0] = 0
+		}
+	}
+}
+
+
+// with bit operation
+func setZeroesWithBit(matrix [][]int)  {
+	rowCache, colCache := 0, 0
+
+	for r:=0; r<len(matrix); r++{
+		for c:=0; c<len(matrix[0]); c++{
+			if matrix[r][c] == 0{
+				// set row , col
+				if !flipBit(r, rowCache) {
+					rowCache ^= 1 << r
+				}
+				if !flipBit(c, colCache) {
+					colCache ^= 1 << c
+				}
+			}
+		}
+	}
+
+	idx := 0
+	for rowCache != 0 {
+		if flipBit(idx, rowCache) {
+			for c := 0; c < len(matrix[0]); c++ {
+				(*&matrix)[idx][c] = 0
+			}
+			rowCache ^= 1 << idx
+		}
+		idx ++
+	}
+	idx = 0
+	for colCache != 0 {
+		if flipBit(idx, colCache){
+			for c := 0; c < len(matrix); c++ {
+				(*&matrix)[c][idx] = 0
+			}
+			colCache ^= 1 << idx
+		}
+		idx ++
+	}
+
+}
+
+func flipBit(idx int, target int) bool {
+	target &= 1 << idx
+	target = target >> idx
+	if target == 1 {
+		return true
+	}
+	return false
 }
 /**
 	在矩阵中查找值
@@ -1400,7 +1537,7 @@ func setSubItemPermutationUnique(res *[][]int, subItems *[]int, used *[]bool, nu
 	}
 
 	for i := 0; i < len(nums) ; i ++{
-		if (*used)[i] || (i>0 && (*used)[i-1] && nums[i] == nums[i-1]){
+		if (*used)[i] || (i>0 && !(*used)[i-1] && nums[i] == nums[i-1]){
 			continue
 		}
 		*subItems = append(*subItems, nums[i])

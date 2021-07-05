@@ -327,7 +327,8 @@ var setCase = []struct{
 }
 func TestSetZeros(t *testing.T)  {
 	for _, ca := range setCase {
-		setZeroes(ca.ma)
+		//setZeroes(ca.ma)
+		setZeroesWithBit(ca.ma)
 		assert.Equal(t, ca.res, ca.ma)
 	}
 }
@@ -370,13 +371,21 @@ func TestSolveSudoku(t *testing.T) {
 }
 
 func TestOp(t *testing.T) {
-	test := []int{1,3,4}
-	test = append(test[:2], test[3:]...)
-	t.Log(test)
-	a := uint(1)
-	b := ^a
-	c := b^a
-	t.Logf("b :%v, c:%v", b, c)
+	r := 0
+	s := 0
+	s ^= 1 << r
+	t.Log(s)
+	s ^= 1 << r
+	t.Log(s)
+	s ^= 1 << r
+	t.Log(s)
+	//test := []int{1,3,4}
+	//test = append(test[:2], test[3:]...)
+	//t.Log(test)
+	//a := uint(1)
+	//b := ^a
+	//c := b^a
+	//t.Logf("b :%v, c:%v", b, c)
 	//t.Log(bits.TrailingZeros8(uint8(10)))
 }
 
@@ -385,7 +394,7 @@ var permutationCases = []struct{
 }{
 	//{nums: []int{1,2,3}},
 	//{nums: []int{1, 2}},
-	{nums: []int{3,3,0,3}},
+	{nums: []int{1,1,2,2,2}},
 }
 
 func TestPermutationCase(t *testing.T) {
@@ -409,6 +418,20 @@ func TestSolveQueue(t *testing.T)  {
 	for _, ca := range queueCase {
 		res := solveNQueens(ca.n)
 		assert.Equal(t, res, ca.res)
+	}
+}
+
+var setColorsCases = []struct {
+	n []int
+	res []int
+}{
+	{n:[]int{2,0,2,1,1,0}, res: []int{0,0,1,1,2,2}},
+}
+
+func TestSetColors(t *testing.T) {
+	for _, ca := range setColorsCases {
+		sortColors(ca.n)
+		assert.Equal(t,ca.res, ca.n)
 	}
 }
 
