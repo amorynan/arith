@@ -1587,3 +1587,73 @@ func setQueue(n, idx int, availableCols, availablePositiveSlash, availableNegati
 	}
 	return
 }
+
+type startPos struct {
+	row int
+	col int
+}
+
+func exist(board [][]byte, word string) bool {
+	wordBytes := []byte(word)
+	matrixCache, startPoss := make([][]bool, len(board)),  make([]startPos, 0)
+
+	for r := 0; r < len(board); r++{
+		matrixCache[r] = make([]bool , len(board[0]))
+		for c := 0; c < len(board[0]); c++ {
+			matrixCache[r][c] = false
+			if board[r][c] == wordBytes[0] {
+				startPoss = append(startPoss, startPos{row: r, col: c})
+			}
+		}
+	}
+
+	if len(startPoss)== 0{
+		return false
+	}
+
+	for i := 0; i < len(startPoss) ; i ++ {
+		if seekWordRecursive(0, startPoss[i].row, startPoss[i].col, &matrixCache, board, wordBytes) {
+			return true
+		}
+	}
+	return false
+}
+
+func seekWordRecursive(idx,  row, col int, matrixCache *[][]bool, board [][]byte, wordBytes []byte) bool {
+	//if idx == len(wordBytes) {
+	//	return true
+	//}
+
+	if board[row][col] == wordBytes[idx] {
+		if idx == len(wordBytes)-1 {
+			return true
+		}
+
+		(*matrixCache)[row][col] = true
+		// up not use
+		if row >= 1 && !(*matrixCache)[row-1][col] {
+			if seekWordRecursive(idx+1, row-1, col, matrixCache, board, wordBytes) {
+				return true
+			}
+		}
+		if row < len(board)-1 && !(*matrixCache)[row+1][col] {
+			if seekWordRecursive(idx+1, row+1, col, matrixCache, board, wordBytes) {
+				return true
+			}
+		}
+		if col < len(board[0])-1 && !(*matrixCache)[row][col+1] {
+			// right
+			if seekWordRecursive(idx+1, row, col+1, matrixCache, board, wordBytes) {
+				return true
+			}
+		}
+		if col >= 1 && !(*matrixCache)[row][col-1] {
+			// left
+			if seekWordRecursive(idx+1, row, col-1, matrixCache, board, wordBytes) {
+				return true
+			}
+		}
+		(*matrixCache)[row][col] = false
+	}
+	return false
+}

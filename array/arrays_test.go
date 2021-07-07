@@ -8,30 +8,33 @@ import (
 )
 
 func TestArrayMake(t *testing.T)  {
-	ta := make([]int, 0, 1)
-	assert.NotNil(t, ta)
-	ta = append(ta, 1)
-	assert.Equal(t, len(ta),1)
-
-	tasss :=  make([]int, 0)
-	assert.NotNil(t, ta)
-	tasss = append(tasss, 1)
-	assert.Equal(t, len(tasss),1)
-
-	tas := make([]int, 35, 35)
-	tas = append(tas, 1)
-	assert.Equal(t, len(tas),36)
-	assert.Equal(t, 1, tas[35])
-
-	tass := make([]int, 35)
-	tass = append(tass, 1)
-	assert.Equal(t, len(tass),36)
-	assert.Equal(t, 1, tas[35])
-
-	tt := make([]int, 0, 35)
-	tt = append(tt, 1)
-	assert.Equal(t, len(tt), 1)
-	assert.Equal(t, 1, tt[0])
+	a := byte('A')
+	b := byte('A')
+	t.Log(a-b)
+	//ta := make([]int, 0, 1)
+	//assert.NotNil(t, ta)
+	//ta = append(ta, 1)
+	//assert.Equal(t, len(ta),1)
+	//
+	//tasss :=  make([]int, 0)
+	//assert.NotNil(t, ta)
+	//tasss = append(tasss, 1)
+	//assert.Equal(t, len(tasss),1)
+	//
+	//tas := make([]int, 35, 35)
+	//tas = append(tas, 1)
+	//assert.Equal(t, len(tas),36)
+	//assert.Equal(t, 1, tas[35])
+	//
+	//tass := make([]int, 35)
+	//tass = append(tass, 1)
+	//assert.Equal(t, len(tass),36)
+	//assert.Equal(t, 1, tas[35])
+	//
+	//tt := make([]int, 0, 35)
+	//tt = append(tt, 1)
+	//assert.Equal(t, len(tt), 1)
+	//assert.Equal(t, 1, tt[0])
 
 }
 
@@ -435,3 +438,19 @@ func TestSetColors(t *testing.T) {
 	}
 }
 
+var existCase = []struct{
+	ca [][]byte
+	word string
+	find bool
+}{
+	{ca: [][]byte{{'a','b'}}, word: "ba", find: true},
+	{ca: [][]byte{{'a'}}, word: "a", find: true},
+	{ca: [][]byte{{'A','B','C','E'}, {'S','F','C','S'}, {'A','D','E','E'}}, word: "SEE", find: true},
+}
+
+func TestExist(t *testing.T) {
+	for _, ca := range existCase {
+		res := exist(ca.ca, ca.word)
+		assert.Equal(t, ca.find, res)
+	}
+}
