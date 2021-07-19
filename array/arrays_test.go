@@ -113,13 +113,18 @@ var repeatedCases = []struct{
 	len int
 	res []int
 }{
+	{params: []int{0,0,0,1,2,2,4,4}, len: 7, res: []int{0,0,1,2,2,4,4}},
 	//{params: []int{1,1,2}, res: 2},
-	{params: []int{0,0,1,1,1,2,2,3,3,4}, len: 5, res: []int{0,1,2,3,4}},
+	//{params: []int{0,0,1,1,1,2,2,3,3,4}, len: 5, res: []int{0,1,2,3,4}},
+	{params: []int{0,0,1,1,1,1,2,3,3}, len: 7, res: []int{0,0,1,1,2,3,3}},
+	{params: []int{0,0,1,1,1,2,2,3,3,4}, len: 9, res: []int{0, 0,1, 1,2,2,3,3,4}},
+	{params: []int{0,1,2,2,2,2,2,3,4,4,4}, len: 7, res: [	]int{0,1,2,2,3,4,4}},
 }
 
 func TestReapted(t *testing.T) {
 	for _, ca := range repeatedCases{
-		incs,res := removeDuplicates(ca.params)
+		//incs,res := removeDuplicates(ca.params)
+		incs, res := removeDuplicatedBest(ca.params)
 		assert.Equal(t, ca.len, incs)
 		assert.Equal(t, ca.res, res)
 	}

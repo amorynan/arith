@@ -470,6 +470,58 @@ func removeDuplicates_Best(nums []int) (int, []int) {
 	return len(nums), nums
 }
 
+/*
+ 删除数组中多余的元素进阶，可以允许数组中最多含有两个相同的
+*/
+func removeDuplicatesTwo(nums []int) (int, []int) {
+	sp, cp := 0, -1
+	for idx, val := range nums {
+		if cp != -1 && ((idx - cp >= 2 && nums[cp] == val) || (idx - sp >= 2 && nums[sp] == val)){
+			continue
+		}
+
+		if val != nums[sp] {
+			sp = idx
+		}
+
+		if cp != -1 {
+			nums[cp] = val
+			cp ++
+		}
+
+		if idx - sp >= 2 && cp == -1 {
+			cp = idx
+		}
+	}
+	if cp != -1 {
+		return cp, nums[:cp]
+	}
+	return len(nums), nums
+}
+
+/**
+ 删除数组(有序的)中相同部分的数字，不管是最大允许多少的相同的量，都可以用快慢指针，快的代表，代检查的最新的位置，慢的代表可以直接给出去的数组
+ */
+func removeDuplicatedBest(nums []int) (int, []int) {
+	//保留两位
+	return removeDuplicatedWithMaxTwo(nums)
+}
+
+func removeDuplicatedWithMaxTwo(nums []int) (int, []int){
+	if len(nums) < 2 {
+		return  len(nums), nums
+	}
+
+	s := 2
+	for f := 2; f < len(nums); f ++{
+		if nums[f] != nums[s-2] {
+			nums[s] = nums[f]
+			s++
+		}
+	}
+	return s, nums[:s]
+}
+
 func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 	mid := (len(nums1) + len(nums2)) / 2
 	midLeft := -1
@@ -690,24 +742,6 @@ func firstMissingPositiveSwap(nums []int) int {
 	return min
 }
 
-/**
-执行效果在go
- */
-func maxArea(height []int) int {
-	maxRecord := 0
-
-	head, tail := 0, len(height)-1
-	for head < tail {
-		maxRecord = max(maxRecord, (tail-head) * min(height[head], height[tail]))
-		if (height[head] <= height[tail]) {
-			head ++
-		} else {
-			tail --
-		}
-	}
-	return maxRecord
-}
-
 func min(a, b int) int {
 	if a <= b {
 		return a
@@ -721,9 +755,9 @@ func max(a, b int) int {
 	return a
 }
 
+///////////////////////// ------ 直方图 ------ //////////////////////
 /**
  #####sssss 经典的接🌧️雨水 题目
-
  */
 func trap(height []int) int {
 
@@ -813,6 +847,7 @@ func trap_best(height []int) int {
 	}
 	return res
 }
+
 
 /*
  数组中的数字代表是可以jump的步数， 从 index 为0 开始 jump 到 最后一个位置，中间jump 的次数最少是多少
