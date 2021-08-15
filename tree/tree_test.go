@@ -32,6 +32,7 @@ func BFSTree(root *TreeNode) {
 	BFSTreeSub([]*TreeNode{root})
 }
 
+
 func BFSTreeSub(root []*TreeNode) {
 	subTreeNode := make([]*TreeNode, 0)
 	nullCount := 0

@@ -6,6 +6,27 @@ import (
 	"sort"
 )
 
+// ======================   greedy ================================
+func candy(ratings []int) int {
+	candis := make([]int, len(ratings))
+
+	for i := 1; i < len(ratings) ; i ++ {
+		if ratings[i] > ratings[i-1] {
+			candis[i] = candis[i-1]+1
+		}
+	}
+	for i := len(ratings)-2; i >= 0;  i-- {
+		if ratings[i] > ratings[i+1] {
+			candis[i] = max(candis[i], candis[i+1] + 1)
+		}
+	}
+	total := len(ratings)
+	for _, v := range candis {
+		total += v
+	}
+	return total
+}
+
 // ======================== recursive ===============================
 func uniquePathsWithRecursion(m int, n int) int {
 	if m == 1 || n == 1 {
@@ -967,6 +988,60 @@ loop:
 }
 
 // ===================================== 矩阵 matrix  ====================================
+func solve(board [][]byte)  {
+	for col := 0; col < len(board[0]); col ++ {
+		if board[0][col] == 'O' {
+			seekDfs(board, 0, col)
+		}
+
+		if board[len(board)-1][col] == 'O' {
+			seekDfs(board, len(board)-1 ,col)
+		}
+	}
+
+
+	for row := 0; row < len(board); row ++ {
+		if board[row][0] == 'O' {
+			seekDfs(board, row, 0)
+		}
+
+		if board[row][len(board[0])-1] == 'O'{
+			seekDfs(board, row, len(board[0])-1)
+		}
+	}
+
+	for row := 0 ; row < len(board); row ++ {
+		for col := 0; col < len(board[0]) ; col ++ {
+			if board[row][col] == 'A' {
+				board[row][col] ='O'
+			}else if board[row][col] == 'O' {
+				board[row][col] = 'X'
+			}
+		}
+	}
+}
+
+func seekDfs(board [][]byte, row , col int) {
+	if board[row][col] == 'X'|| board[row][col] == 'A' {
+		return
+	}
+	board[row][col] = 'A'
+	if row < len(board)-1{
+		seekDfs(board, row+1, col)
+	}
+	if col < len(board[0])-1 {
+		seekDfs(board, row, col+1)
+	}
+	if row > 1 {
+		seekDfs(board, row-1, col)
+	}
+	if col > 1 {
+		seekDfs(board, row, col-1)
+	}
+}
+
+
+
 /**
  🚩旋转矩阵, 还是采用矩阵的对称性
  */
@@ -1216,7 +1291,15 @@ func setZerosWithNoSpace(matrix [][]int) {
 }
 
 
-// with bit operation
+// ================== with bit operation ===============
+func singleNumber(nums []int) int {
+	res := 0
+	for _, n := range nums {
+		res ^= n
+	}
+	return res
+}
+
 func setZeroesWithBit(matrix [][]int)  {
 	rowCache, colCache := 0, 0
 
@@ -1691,4 +1774,56 @@ func seekWordRecursive(idx,  row, col int, matrixCache *[][]bool, board [][]byte
 		(*matrixCache)[row][col] = false
 	}
 	return false
+}
+
+func longestConsecutive(nums []int) int {
+
+	maxLen, numsMap := 0, make(map[int][]int, 0)
+	for _, v := range nums {
+		if _, exist := numsMap[v]; !exist {
+
+			recordedS, exists := numsMap[v-1]
+			recordedL, existl := numsMap[v+1]
+
+			if exists && existl {
+				numsMap[recordedS[0]][1] = recordedL[1]
+				numsMap[recordedL[1]][0] = recordedS[0]
+				numsMap[v] = []int{recordedS[0], recordedL[1]}
+				maxLen = max(maxLen, recordedL[1]-recordedS[0]+1)
+			}else if exists {
+				numsMap[v] = []int{recordedS[0], v}
+				numsMap[recordedS[0]][1] = v
+				maxLen = max(maxLen, v-recordedS[0]+1)
+			}else if existl {
+				numsMap[v] = []int{v, recordedL[1]}
+				numsMap[recordedL[1]][0] = v
+				maxLen = max(maxLen, recordedL[1]-v+1)
+				}else {
+				numsMap[v] = []int{v, v}
+			}
+
+		}
+	}
+	return maxLen
+}
+
+func longestConsecutive_best(nums []int) int {
+	if len(nums) == 0 {
+		return 0
+	}
+	maxLen, numsMap := 1 , make(map[int]int, 0)
+	for _, v := range nums {
+		if numsMap[v] == 0 {
+			// not exist
+			rLen, lLen, seqLen := numsMap[v-1], numsMap[v+1], numsMap[v+1]+numsMap[v-1]+1
+
+			// refresh the seq bounds
+			numsMap[v] = seqLen
+			numsMap[v+lLen]  = seqLen //left
+			numsMap[v-rLen] = seqLen //right
+
+			maxLen = max(maxLen, seqLen)
+		}
+	}
+	return maxLen
 }
