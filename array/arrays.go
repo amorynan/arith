@@ -2,6 +2,7 @@ package array
 
 import (
 	"fmt"
+	"math"
 	"math/bits"
 	"sort"
 )
@@ -1292,6 +1293,7 @@ func setZerosWithNoSpace(matrix [][]int) {
 
 
 // ================== with bit operation ===============
+// 找出数组中只出现一次的数字 I
 func singleNumber(nums []int) int {
 	res := 0
 	for _, n := range nums {
@@ -1299,6 +1301,7 @@ func singleNumber(nums []int) int {
 	}
 	return res
 }
+// 找出数组中只出现一次的数字 II
 
 func setZeroesWithBit(matrix [][]int)  {
 	rowCache, colCache := 0, 0

